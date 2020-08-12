@@ -134,20 +134,19 @@ class Link{
 	}
 }
 
-function permut(len:number): number[]{
+function permut(len:number,maxPerm:number): number[]{
 	math.randomseed(os.time())
 	let permutation:number[] =[]
 	for(let i:number=0;i<len;i++){
 		permutation.push(i)
 	}
-	let l:number = 0;
-	while(l>=0){
-		let j = 1+math.floor(math.random() * l);
-		let valI:number = permutation[l];
+	for(let step:number=0;step<maxPerm;step++){
+		let i:number = math.floor(math.random() * len);
+		let j:number = math.floor(math.random() * len);
+		let valI:number = permutation[i];
 		let valJ:number = permutation[j];
-		permutation[l] = valJ;
+		permutation[i] = valJ;
 		permutation[j] = valI;
-		l = l - 1;
 	}
 	return permutation;
 }
@@ -293,7 +292,7 @@ love.load = ()=>{
 	}
 	print(connexion.length)
 
-	let permutation = permut(connexion.length)
+	let permutation = permut(connexion.length,connexion.length*2)
 
 	for(let i:number=0;i<permutation.length;i++){	
 		let p = permutation[i];
