@@ -295,7 +295,7 @@ love.load = ()=>{
 	let permutation = permut(connexion.length,connexion.length*2)
 
 	for(let i:number=0;i<permutation.length;i++){	
-		let p = permutation[i];
+		let p = i//permutation[i];
 		let l:Link = connexion[p];
 
 		let t1:Triangle = triangles[l.t1]
