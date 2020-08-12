@@ -1,0 +1,16 @@
+{
+  "name": "Ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "clean": "rm -rf build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && tstl -p tsconfig.json && cp -R assets build/ && cp -R vendor build/",
+    "start": "npm run build && love build",
+    "pack": "npm run build && cd build && zip -9 -r ../Ui.love *"
+  },
+  "dependencies": {
+    "typescript-to-lua": "^0.11.1"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".", // For resolving require(...) paths
+    "noLib": false, // Prevents auto-complete suggestions from non-lua libraries
+    "outDir": "build", // Output lua files to a directory named lua
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "lib": ["es5", "es6"]
+  },
+  "include": [
+    // the definition files from this repo
+    "lib-defs/*.d.ts",
+
+    // any file ending in ts within the current directory is targeted for transpilation
+    // except d.ts files
+    "src/*.ts",
+    "*.ts"
+  ],
+  "luaTarget": "JIT"
+}

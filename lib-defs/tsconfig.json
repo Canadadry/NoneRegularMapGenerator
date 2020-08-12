@@ -1,0 +1,5 @@
+{
+  "compilerOptions": {
+    "noLib": false // prevents the use of non-lua libraries
+  }
+}
