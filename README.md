@@ -10,12 +10,15 @@ In short  :
 1. just shearing a rectangulal grid will give us what we need. 
 ![sheared grid](screenshot1.png)
 2. Merge closest vertices into edges 
-![sheared grid](screenshot2.png)
+![triangle](screenshot2.png)
 3. Merge triplet of edges in triangle
 
 **Second Step** Randomly megre two adjacent triangles into one quad
+![triangle selected to merge](screenshot3.png)
 
-**Third Step** Relaxing quad to have more smooth grid
+**Third Step** Sub dividing qud into 4 smaller quad
+
+**Fourth Step** Relaxing quad to have more smooth grid
 
 
 

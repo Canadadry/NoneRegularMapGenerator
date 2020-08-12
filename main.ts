@@ -119,18 +119,21 @@ class Link{
 	}
 }
 
-function shuffleTab<T>(array:Array<T>): Array<T>{
-	let l:number = array.length;
-
+function permut(len:number): number[]{
+	let permutation:number[] =[]
+	for(let i:number=0;i<len;i++){
+		permutation.push(i)
+	}
+	let l:number = 0;
 	while(l>=0){
 		let j = 1+math.floor(math.random() * l);
-		let valI:T = array[l];
-		let valJ:T = array[j];
-		array[l] = valJ;
-		array[j] = valI;
+		let valI:number = permutation[l];
+		let valJ:number = permutation[j];
+		permutation[l] = valJ;
+		permutation[j] = valI;
 		l = l - 1;
 	}
-	return array;
+	return permutation;
 }
 
 let tiles:HexagonalTile[] = []
@@ -235,7 +238,25 @@ love.load = ()=>{
 	}
 	print(connexion.length)
 
-	// shuffleTab(connexion)
+	let permutation = permut(connexion.length)
+
+
+	for(let i:number=0;i<permutation.length;i++){	
+		let p = permutation[i];
+		let l:Link = connexion[p];
+
+		let t1:Triangle = triangles[l.t1]
+		let t2:Triangle = triangles[l.t2]
+		if(t1.mergedWith != null){
+			continue
+		}
+		if(t2.mergedWith != null){
+			continue
+		}
+		t1.mergedWith = t2
+		t2.mergedWith = t1
+		l.selectedToMerge = true
+	}
 }
 
 
