@@ -305,6 +305,10 @@ function insertNeighbour(n:number,arr:number[]){
 	}
 }
 
+function relax(p:number,step:number,relaxingPoints:Vector[][]):Vector{
+	return relaxingPoints[step-1][p]
+}
+
 let hexaTiles:HexagonalTile[] = []
 let edges:Edge[] = []
 let triangles:Triangle[]=[]
@@ -314,8 +318,8 @@ let tiles:Tile[] = []
 let points:Vector[] =[]
 let rtiles:ReferencedTile[] = []
 let neightBourPoints:number[][] = []
-
 let graphicsNeightBourPoints:[Vector,Vector][] = []
+let relaxingPoints: Vector[][] = []
 
 love.update = (dt) =>{}
 
@@ -363,8 +367,10 @@ love.draw = function() {
 	}
 
 	love.graphics.setColor(1,0,0,1)
-	for(let i:number=0;i<points.length;i++){
-		Point(points[i].x,points[i].y)
+	let lastStep = relaxingPoints.length-1
+	let ps = relaxingPoints[lastStep]
+	for(let i:number=0;i<ps.length;i++){
+		Point(ps[i].x,ps[i].y)
 	}
 }
 
@@ -500,6 +506,14 @@ love.load = ()=>{
 				other.add(current.mul(-1)).mul(0.4).add(current)
 			])
 		}
+	}
+
+	relaxingPoints.push(points)
+	for(let step:number=1;step<2;step++){
+		relaxingPoints.push([])
+		for(let i:number=0;i<points.length;i++){
+			relaxingPoints[step].push(relax(i,step,relaxingPoints))
+		}		
 	}
 
 }
