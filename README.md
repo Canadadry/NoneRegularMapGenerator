@@ -45,6 +45,14 @@ With no random we have all the triangle merged which is nice. We will deal with 
 
 **Fourth Step** Relaxing quad to have more smooth grid
 
+Here what we are going to use : 
+
+1. List all the points.
+2. Quads should list point by indexing the first list
+3. Build a list of quads by points
+4. Build a list of neighbour points by points
+5. Choose a relaxing function on each point. This function should not modify the initial list but build a new one
+6. Apply your function until no points move
 
 
 ## Demo Usage
