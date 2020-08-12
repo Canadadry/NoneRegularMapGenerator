@@ -58,7 +58,7 @@ Here step 4 illustrated
 
 ![point and link to their neighbour](screenshot6.png)
 
-First attempt for relaxing point => moving each point to the gravity center of its neighbour
+First attempt for relaxing point => moving each point to the gravity center of its neighbour, its called [laplacian smoothing](https://en.wikipedia.org/wiki/Laplacian_smoothing) but we should better use a more sofisticated approche as [this one](http://downloads.hindawi.com/journals/mpe/2015/435648.pdf)
 
 ![rexaling to center of gravity](screenshot7.png)
 
