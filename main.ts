@@ -112,7 +112,20 @@ class Triangle{
 		}
 		print("failing to find the oppotise point")
 		return this.points[0];
+	}	
+	subivide():Tile[]{
+		let middles:[Vector,Vector,Vector] = [
+			this.points[0].pos.add(this.points[1].pos).mul(1.0/2.0),
+			this.points[1].pos.add(this.points[2].pos).mul(1.0/2.0),
+			this.points[2].pos.add(this.points[0].pos).mul(1.0/2.0),
+		]
+		return [
+			new Tile(this.points[0].pos,middles[0],this.center,middles[2]),
+			new Tile(this.points[1].pos,middles[1],this.center,middles[0]),
+			new Tile(this.points[2].pos,middles[2],this.center,middles[1]),
+		]
 	}
+
 	draw(){
 		this.edges[0].draw()
 		this.edges[1].draw()
@@ -342,7 +355,7 @@ love.load = ()=>{
 	let permutation = permut(connexion.length,connexion.length*2)
 
 	for(let i:number=0;i<permutation.length;i++){	
-		let p = i//permutation[i];
+		let p = permutation[i];
 		let l:Link = connexion[p];
 
 		let t1:Triangle = triangles[l.t1]
@@ -362,6 +375,15 @@ love.load = ()=>{
 
 	for(let i:number=0;i<quads.length;i++){	
 		let subs = quads[i].subivide()
+		for(let j:number=0;j<subs.length;j++){
+			tiles.push(subs[j])
+		} 
+	}
+	for(let i:number=0;i<(triangles.length)-1;i++){
+		if(triangles[i].mergedWith != null){
+			continue
+		}
+		let subs = triangles[i].subivide()
 		for(let j:number=0;j<subs.length;j++){
 			tiles.push(subs[j])
 		} 
