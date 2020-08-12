@@ -25,8 +25,9 @@ let VectorColumn = new Vector(
 ); 
 
 function Point(x:number,y:number){
-	love.graphics.setColor(1,1,1,1)
+
 	love.graphics.rectangle("fill",x-2,y-2,4,4,2,2)
+	// love.graphics.printf(x+"-"+y,(x-400)*1.2+380,y,100)
 }
 
 class HexagonalTile{
@@ -72,9 +73,9 @@ class Edge{
 	}
 }
 
-function Dist(t1:HexagonalTile,t2:HexagonalTile):number{
-	return  (   (t1.pos.x-t2.pos.x)*(t1.pos.x-t2.pos.x) 
-			  + (t1.pos.y-t2.pos.y)*(t1.pos.y-t2.pos.y)
+function Dist(t1:Vector,t2:Vector):number{
+	return  (   (t1.x-t2.x)*(t1.x-t2.x) 
+			  + (t1.y-t2.y)*(t1.y-t2.y)
 			) / (scale*scale)
 }
 
@@ -241,12 +242,61 @@ class Tile{
 	}
 }
 
+class ReferencedTile{
+	points:[number,number,number,number]
+	constructor(p1:number,p2:number,p3:number,p4:number){
+		this.points = [p1,p2,p3,p4]
+	}
+	draw(points:Vector[]){
+		love.graphics.setColor(1,1,1,1)
+		love.graphics.line(
+			points[this.points[0]].x,points[this.points[0]].y,
+			points[this.points[1]].x,points[this.points[1]].y
+		)
+		love.graphics.line(
+			points[this.points[1]].x,points[this.points[1]].y,
+			points[this.points[2]].x,points[this.points[2]].y
+		)
+		love.graphics.line(
+			points[this.points[2]].x,points[this.points[2]].y,
+			points[this.points[3]].x,points[this.points[3]].y
+		)
+		love.graphics.line(
+			points[this.points[3]].x,points[this.points[3]].y,
+			points[this.points[0]].x,points[this.points[0]].y
+		)
+	}
+}
+
+function find(p:Vector,dist:number,points:Vector[]):number|null{
+	// print("find")
+	for(let i:number=0;i<points.length;i++){
+		let d:number = Dist(p,points[i])
+		// print(d<dist,p.x,p.y,points[i].x,points[i].y,d)
+		if(d<dist){
+			return i;
+		}
+	}
+	return null
+}
+
+function insert(p:Vector,points:Vector[]):number{
+	let index = find(p,0.01,points)
+	if(index != null){
+		return index
+	}
+	points.push(p)
+	return points.length-1
+}
+
 let hexaTiles:HexagonalTile[] = []
 let edges:Edge[] = []
 let triangles:Triangle[]=[]
 let connexion:Link[] = []
 let quads:Quad[] = []
 let tiles:Tile[] = []
+let points:Vector[] =[]
+let rtiles:ReferencedTile[] = []
 
 love.update = (dt) =>{}
 
@@ -278,9 +328,19 @@ love.draw = function() {
 	// for(let i:number=0;i<quads.length;i++){
 	// 	quads[i].draw()
 	// }
-	for(let i:number=0;i<tiles.length;i++){
-		tiles[i].draw()
+
+	// for(let i:number=0;i<tiles.length;i++){
+	// 	tiles[i].draw()
+	// }
+	for(let i:number=0;i<rtiles.length;i++){
+		rtiles[i].draw(points)
 	}
+	love.graphics.setColor(1,0,0,1)
+	for(let i:number=0;i<points.length;i++){
+		Point(points[i].x,points[i].y)
+	}
+
+
 
 }
 
@@ -301,7 +361,7 @@ love.load = ()=>{
 	}
 	for(let i:number=0;i<(hexaTiles.length)-1;i++){
 		for(let j:number=i+1;j<hexaTiles.length;j++){
-			let d:number= Dist(hexaTiles[i],hexaTiles[j])
+			let d:number= Dist(hexaTiles[i].pos,hexaTiles[j].pos)
 			if( d<= 1.01){
 				edges.push(new Edge(hexaTiles[i],hexaTiles[j]))
 			}
@@ -388,6 +448,15 @@ love.load = ()=>{
 			tiles.push(subs[j])
 		} 
 	}
+
+	for(let i:number=0;i<tiles.length;i++){
+		let p1:number = insert(tiles[i].points[0],points)
+		let p2:number = insert(tiles[i].points[1],points)
+		let p3:number = insert(tiles[i].points[2],points)
+		let p4:number = insert(tiles[i].points[3],points)
+		rtiles.push(new ReferencedTile(p1,p2,p3,p4))
+	}
+
 
 }
 
