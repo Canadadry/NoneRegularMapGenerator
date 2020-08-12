@@ -54,6 +54,9 @@ Here what we are going to use :
 5. Choose a relaxing function on each point. This function should not modify the initial list but build a new one
 6. Apply your function until no points move
 
+Here step 4 illustrated 
+
+![point and link to their neighbour](screenshot6.png)
 
 ## Demo Usage
 

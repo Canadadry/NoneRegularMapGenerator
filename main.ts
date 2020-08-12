@@ -280,13 +280,29 @@ function find(p:Vector,dist:number,points:Vector[]):number|null{
 	return null
 }
 
-function insert(p:Vector,points:Vector[]):number{
+function insert(p:Vector,points:Vector[],neightBourPoints:number[][]):number{
 	let index = find(p,0.01,points)
 	if(index != null){
 		return index
 	}
 	points.push(p)
+	neightBourPoints.push([])
 	return points.length-1
+}
+
+function contain(n:number,arr:number[]):boolean{
+	for(let i:number=0;i<arr.length;i++){
+		if(arr[i]==n){
+			return true
+		}
+	}
+	return false
+}
+
+function insertNeighbour(n:number,arr:number[]){
+	if(contain(n,arr)==false){
+		arr.push(n)
+	}
 }
 
 let hexaTiles:HexagonalTile[] = []
@@ -297,6 +313,9 @@ let quads:Quad[] = []
 let tiles:Tile[] = []
 let points:Vector[] =[]
 let rtiles:ReferencedTile[] = []
+let neightBourPoints:number[][] = []
+
+let graphicsNeightBourPoints:[Vector,Vector][] = []
 
 love.update = (dt) =>{}
 
@@ -332,16 +351,21 @@ love.draw = function() {
 	// for(let i:number=0;i<tiles.length;i++){
 	// 	tiles[i].draw()
 	// }
-	for(let i:number=0;i<rtiles.length;i++){
-		rtiles[i].draw(points)
+	// for(let i:number=0;i<rtiles.length;i++){
+	// 	rtiles[i].draw(points)
+	// }
+
+
+	love.graphics.setColor(1,1,0,1)
+	for(let i:number=0;i<graphicsNeightBourPoints.length;i++){
+		let l = graphicsNeightBourPoints[i]
+		love.graphics.line(l[0].x,l[0].y,l[1].x,l[1].y,)
 	}
+
 	love.graphics.setColor(1,0,0,1)
 	for(let i:number=0;i<points.length;i++){
 		Point(points[i].x,points[i].y)
 	}
-
-
-
 }
 
 love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
@@ -439,7 +463,7 @@ love.load = ()=>{
 			tiles.push(subs[j])
 		} 
 	}
-	for(let i:number=0;i<(triangles.length)-1;i++){
+	for(let i:number=0;i<triangles.length;i++){
 		if(triangles[i].mergedWith != null){
 			continue
 		}
@@ -450,13 +474,33 @@ love.load = ()=>{
 	}
 
 	for(let i:number=0;i<tiles.length;i++){
-		let p1:number = insert(tiles[i].points[0],points)
-		let p2:number = insert(tiles[i].points[1],points)
-		let p3:number = insert(tiles[i].points[2],points)
-		let p4:number = insert(tiles[i].points[3],points)
+		let p1:number = insert(tiles[i].points[0],points,neightBourPoints)
+		let p2:number = insert(tiles[i].points[1],points,neightBourPoints)
+		let p3:number = insert(tiles[i].points[2],points,neightBourPoints)
+		let p4:number = insert(tiles[i].points[3],points,neightBourPoints)
 		rtiles.push(new ReferencedTile(p1,p2,p3,p4))
+
+		insertNeighbour(p2,neightBourPoints[p1])
+		insertNeighbour(p4,neightBourPoints[p1])
+		insertNeighbour(p1,neightBourPoints[p2])
+		insertNeighbour(p2,neightBourPoints[p2])
+		insertNeighbour(p2,neightBourPoints[p3])
+		insertNeighbour(p4,neightBourPoints[p3])
+		insertNeighbour(p3,neightBourPoints[p4])
+		insertNeighbour(p1,neightBourPoints[p4])
 	}
 
+	for(let i:number=0;i<neightBourPoints.length;i++){
+		let neightBourPoint = neightBourPoints[i] 
+		let current = points[i]
+		for(let j:number=0;j<neightBourPoint.length;j++){
+			let other = points[neightBourPoint[j]]
+			graphicsNeightBourPoints.push([
+				current,
+				other.add(current.mul(-1)).mul(0.4).add(current)
+			])
+		}
+	}
 
 }
 
