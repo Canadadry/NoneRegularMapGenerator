@@ -90,15 +90,28 @@ class Triangle{
 		this.center = p1.pos.add(p2.pos).add(p3.pos).mul(1.0/3.0)
 		this.mergedWith = null
 	}
-	hasACommonEdge(tri:Triangle):boolean{
+	getCommonEdge(tri:Triangle):Edge|null{
 		for(let i:number=0;i<this.edges.length;i++){
 			for(let j:number=0;j<this.edges.length;j++){
 				if (this.edges[i]==tri.edges[j]){
-					return true
+					return this.edges[i]
 				}
 			}			
 		}
-		return false
+		return null
+	}
+	getOppositePointOf(edge:Edge):HexagonalTile{
+		for(let i:number=0;i<this.points.length;i++){
+			if (edge.points[0]==this.points[i]){
+				continue
+			}
+			if (edge.points[1]==this.points[i]){
+				continue
+			}
+			return this.points[i]
+		}
+		print("failing to find the oppotise point")
+		return this.points[0];
 	}
 	draw(){
 		this.edges[0].draw()
@@ -111,15 +124,18 @@ class Triangle{
 class Link{
 	t1:number
 	t2:number
+	edge:Edge
 	selectedToMerge:boolean
-	constructor(t1:number,t2:number){
+	constructor(t1:number,t2:number,edge:Edge){
 		this.t1 = t1
 		this.t2 = t2
+		this.edge = edge
 		this.selectedToMerge=false
 	}
 }
 
 function permut(len:number): number[]{
+	math.randomseed(os.time())
 	let permutation:number[] =[]
 	for(let i:number=0;i<len;i++){
 		permutation.push(i)
@@ -136,10 +152,45 @@ function permut(len:number): number[]{
 	return permutation;
 }
 
+class Quad{
+	points:[Vector,Vector,Vector,Vector]
+	constructor(t1:Triangle,t2:Triangle,edge:Edge){
+		let t1MissingPoint = t1.getOppositePointOf(edge)
+		let t2MissingPoint = t2.getOppositePointOf(edge)
+		this.points = [
+			t1MissingPoint.pos,
+			edge.points[0].pos,
+			t2MissingPoint.pos,
+			edge.points[1].pos
+		]
+	}
+
+	draw(){
+		love.graphics.setColor(1,1,1,1)
+		love.graphics.line(
+			this.points[0].x,this.points[0].y,
+			this.points[1].x,this.points[1].y
+		)
+		love.graphics.line(
+			this.points[1].x,this.points[1].y,
+			this.points[2].x,this.points[2].y
+		)
+		love.graphics.line(
+			this.points[2].x,this.points[2].y,
+			this.points[3].x,this.points[3].y
+		)
+		love.graphics.line(
+			this.points[3].x,this.points[3].y,
+			this.points[0].x,this.points[0].y
+		)
+	}
+}
+
 let tiles:HexagonalTile[] = []
 let edges:Edge[] = []
 let triangles:Triangle[]=[]
 let connexion:Link[] = []
+let quads:Quad[] = []
 
 love.update = (dt) =>{}
 
@@ -151,22 +202,25 @@ love.draw = function() {
 	// for(let i:number=0;i<edges.length;i++){
 	// 	edges[i].draw()
 	// }
-	for(let i:number=0;i<triangles.length;i++){
-		triangles[i].draw()
-	}
-	for(let i:number=0;i<connexion.length;i++){
-		let l:Link = connexion[i]
-		let c1 = triangles[l.t1].center
-		let c2 = triangles[l.t2].center
-		if(l.selectedToMerge){
-			love.graphics.setColor(1,0,0,1)
-		}else{
-			love.graphics.setColor(0,1,1,1)
-		}
-		love.graphics.line(
-			c1.x,c1.y,
-			c2.x,c2.y
-		)
+	// for(let i:number=0;i<triangles.length;i++){
+	// 	triangles[i].draw()
+	// }
+	// for(let i:number=0;i<connexion.length;i++){
+	// 	let l:Link = connexion[i]
+	// 	let c1 = triangles[l.t1].center
+	// 	let c2 = triangles[l.t2].center
+	// 	if(l.selectedToMerge){
+	// 		love.graphics.setColor(1,0,0,1)
+	// 	}else{
+	// 		love.graphics.setColor(0,1,1,1)
+	// 	}
+	// 	love.graphics.line(
+	// 		c1.x,c1.y,
+	// 		c2.x,c2.y
+	// 	)
+	// }
+	for(let i:number=0;i<quads.length;i++){
+		quads[i].draw()
 	}
 
 }
@@ -231,15 +285,15 @@ love.load = ()=>{
 
 	for(let i:number=0;i<(triangles.length)-1;i++){
 		for(let j:number=i+1;j<triangles.length;j++){
-			if (triangles[i].hasACommonEdge(triangles[j])){
-				connexion.push(new Link(i,j))
+			let edge = triangles[i].getCommonEdge(triangles[j])
+			if(edge != null){
+				connexion.push(new Link(i,j,edge))
 			}
 		}
 	}
 	print(connexion.length)
 
 	let permutation = permut(connexion.length)
-
 
 	for(let i:number=0;i<permutation.length;i++){	
 		let p = permutation[i];
@@ -256,6 +310,8 @@ love.load = ()=>{
 		t1.mergedWith = t2
 		t2.mergedWith = t1
 		l.selectedToMerge = true
+
+		quads.push(new Quad(t1,t2,l.edge))
 	}
 }
 
