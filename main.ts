@@ -156,11 +156,28 @@ class Quad{
 	constructor(t1:Triangle,t2:Triangle,edge:Edge){
 		let t1MissingPoint = t1.getOppositePointOf(edge)
 		let t2MissingPoint = t2.getOppositePointOf(edge)
+		// we might want to check if the order is direct or indirect
 		this.points = [
 			t1MissingPoint.pos,
 			edge.points[0].pos,
 			t2MissingPoint.pos,
 			edge.points[1].pos
+		]
+	}
+
+	subivide():Tile[]{
+		let middles:[Vector,Vector,Vector,Vector] = [
+			this.points[0].add(this.points[1]).mul(1.0/2.0),
+			this.points[1].add(this.points[2]).mul(1.0/2.0),
+			this.points[2].add(this.points[3]).mul(1.0/2.0),
+			this.points[3].add(this.points[0]).mul(1.0/2.0),
+		]
+		let center = middles[0].add(middles[2]).mul(1.0/2.0)
+		return [
+			new Tile(this.points[0],middles[0],center,middles[3]),
+			new Tile(this.points[1],middles[1],center,middles[0]),
+			new Tile(this.points[2],middles[2],center,middles[1]),
+			new Tile(this.points[3],middles[3],center,middles[2])
 		]
 	}
 
@@ -185,18 +202,45 @@ class Quad{
 	}
 }
 
-let tiles:HexagonalTile[] = []
+class Tile{
+	points:[Vector,Vector,Vector,Vector]
+	constructor(p1:Vector,p2:Vector,p3:Vector,p4:Vector){
+		this.points = [p1,p2,p3,p4]
+	}
+	draw(){
+		love.graphics.setColor(1,1,1,1)
+		love.graphics.line(
+			this.points[0].x,this.points[0].y,
+			this.points[1].x,this.points[1].y
+		)
+		love.graphics.line(
+			this.points[1].x,this.points[1].y,
+			this.points[2].x,this.points[2].y
+		)
+		love.graphics.line(
+			this.points[2].x,this.points[2].y,
+			this.points[3].x,this.points[3].y
+		)
+		love.graphics.line(
+			this.points[3].x,this.points[3].y,
+			this.points[0].x,this.points[0].y
+		)
+	}
+}
+
+let hexaTiles:HexagonalTile[] = []
 let edges:Edge[] = []
 let triangles:Triangle[]=[]
 let connexion:Link[] = []
 let quads:Quad[] = []
+let tiles:Tile[] = []
 
 love.update = (dt) =>{}
 
 love.draw = function() {
 	love.graphics.clear(0,0,0)
-	// for(let i:number=0;i<tiles.length;i++){
-	// 	tiles[i].draw()
+	// for(let i:number=0;i<hexaTiles.length;i++){
+	// 	hexaTiles[i].draw()
 	// }
 	// for(let i:number=0;i<edges.length;i++){
 	// 	edges[i].draw()
@@ -218,8 +262,11 @@ love.draw = function() {
 	// 		c2.x,c2.y
 	// 	)
 	// }
-	for(let i:number=0;i<quads.length;i++){
-		quads[i].draw()
+	// for(let i:number=0;i<quads.length;i++){
+	// 	quads[i].draw()
+	// }
+	for(let i:number=0;i<tiles.length;i++){
+		tiles[i].draw()
 	}
 
 }
@@ -236,18 +283,18 @@ love.load = ()=>{
 			if (math.abs(r+c)>depth){
 				continue
 			} 
-			tiles.push(new HexagonalTile(r,c))		
+			hexaTiles.push(new HexagonalTile(r,c))		
 		}
 	}
-	for(let i:number=0;i<(tiles.length)-1;i++){
-		for(let j:number=i+1;j<tiles.length;j++){
-			let d:number= Dist(tiles[i],tiles[j])
+	for(let i:number=0;i<(hexaTiles.length)-1;i++){
+		for(let j:number=i+1;j<hexaTiles.length;j++){
+			let d:number= Dist(hexaTiles[i],hexaTiles[j])
 			if( d<= 1.01){
-				edges.push(new Edge(tiles[i],tiles[j]))
+				edges.push(new Edge(hexaTiles[i],hexaTiles[j]))
 			}
 		}
 	}
-	print(edges.length)
+	// print(edges.length)
 
 	for(let i:number=0;i<edges.length-2;i++){
 		let e1 = edges[i]
@@ -280,7 +327,7 @@ love.load = ()=>{
 			}
 		}
 	}
-	print(triangles.length)
+	// print(triangles.length)
 
 	for(let i:number=0;i<(triangles.length)-1;i++){
 		for(let j:number=i+1;j<triangles.length;j++){
@@ -290,7 +337,7 @@ love.load = ()=>{
 			}
 		}
 	}
-	print(connexion.length)
+	// print(connexion.length)
 
 	let permutation = permut(connexion.length,connexion.length*2)
 
@@ -312,6 +359,14 @@ love.load = ()=>{
 
 		quads.push(new Quad(t1,t2,l.edge))
 	}
+
+	for(let i:number=0;i<quads.length;i++){	
+		let subs = quads[i].subivide()
+		for(let j:number=0;j<subs.length;j++){
+			tiles.push(subs[j])
+		} 
+	}
+
 }
 
 
