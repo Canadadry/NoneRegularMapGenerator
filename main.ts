@@ -305,8 +305,14 @@ function insertNeighbour(n:number,arr:number[]){
 	}
 }
 
-function relax(p:number,step:number,relaxingPoints:Vector[][]):Vector{
-	return relaxingPoints[step-1][p]
+function relax(p:number,step:number,relaxingPoints:Vector[][],neightBourPoints:number[][]):Vector{
+	let current = new Vector(0,0)
+	for(let i:number=0;i<neightBourPoints[p].length;i++){
+		let n = neightBourPoints[p][i]
+		current = current.add(relaxingPoints[step-1][n])
+	}
+	current = current.mul(1/neightBourPoints[p].length)
+	return current
 }
 
 let hexaTiles:HexagonalTile[] = []
@@ -355,20 +361,21 @@ love.draw = function() {
 	// for(let i:number=0;i<tiles.length;i++){
 	// 	tiles[i].draw()
 	// }
-	// for(let i:number=0;i<rtiles.length;i++){
-	// 	rtiles[i].draw(points)
-	// }
-
-
-	love.graphics.setColor(1,1,0,1)
-	for(let i:number=0;i<graphicsNeightBourPoints.length;i++){
-		let l = graphicsNeightBourPoints[i]
-		love.graphics.line(l[0].x,l[0].y,l[1].x,l[1].y,)
-	}
-
-	love.graphics.setColor(1,0,0,1)
 	let lastStep = relaxingPoints.length-1
 	let ps = relaxingPoints[lastStep]
+
+	for(let i:number=0;i<rtiles.length;i++){
+		rtiles[i].draw(ps)
+	}
+
+
+	// love.graphics.setColor(1,1,0,1)
+	// for(let i:number=0;i<graphicsNeightBourPoints.length;i++){
+	// 	let l = graphicsNeightBourPoints[i]
+	// 	love.graphics.line(l[0].x,l[0].y,l[1].x,l[1].y,)
+	// }
+
+	love.graphics.setColor(1,0,0,1)
 	for(let i:number=0;i<ps.length;i++){
 		Point(ps[i].x,ps[i].y)
 	}
@@ -509,10 +516,10 @@ love.load = ()=>{
 	}
 
 	relaxingPoints.push(points)
-	for(let step:number=1;step<2;step++){
+	for(let step:number=1;step<15;step++){
 		relaxingPoints.push([])
 		for(let i:number=0;i<points.length;i++){
-			relaxingPoints[step].push(relax(i,step,relaxingPoints))
+			relaxingPoints[step].push(relax(i,step,relaxingPoints,neightBourPoints))
 		}		
 	}
 

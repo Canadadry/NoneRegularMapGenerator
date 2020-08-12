@@ -58,6 +58,10 @@ Here step 4 illustrated
 
 ![point and link to their neighbour](screenshot6.png)
 
+First attempt for relaxing point => moving each point to the gravity center of its neighbour
+
+![rexaling to center of gravity](screenshot7.png)
+
 ## Demo Usage
 
 ### Setup
