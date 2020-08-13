@@ -306,13 +306,15 @@ function insertNeighbour(n:number,arr:number[]){
 }
 
 function relax(p:number,step:number,relaxingPoints:Vector[][],neightBourPoints:number[][]):Vector{
-	let current = new Vector(0,0)
+	let gravity = new Vector(0,0)
 	for(let i:number=0;i<neightBourPoints[p].length;i++){
 		let n = neightBourPoints[p][i]
-		current = current.add(relaxingPoints[step-1][n])
+		gravity = gravity.add(relaxingPoints[step-1][n])
 	}
-	current = current.mul(1/neightBourPoints[p].length)
-	return current
+	gravity = gravity.mul(1/neightBourPoints[p].length)
+	let current = relaxingPoints[step-1][p]
+	let force = gravity.add(current.mul(-1)).mul(0.3)
+	return current.add(force)
 }
 
 let hexaTiles:HexagonalTile[] = []
