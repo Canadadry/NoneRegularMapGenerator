@@ -23,7 +23,7 @@ This process is a bit clumssy and lead to triangle that cannot be merged.
 The border has hole and you find some alone triangle inside the quads. Which is not what we wanted
 
 We will get on our feed with the next step. We will sub-divide quad into 4 but we can sub dived triangle into 3 quad. 
-The quand are ment to be perfect or pretty, this will be done with the last step
+The quad are not perfect or pretty but we dont care for now, this will be done with the last step
 
 **example** 
 
@@ -37,8 +37,6 @@ The quand are ment to be perfect or pretty, this will be done with the last step
 |__|___\
 
 ```
-![triangle not randomly selected to merge](screenshot4.png)
-With no random we have all the triangle merged which is nice. We will deal with the randomness later
 
 **Third Step** Sub dividing quad into 4 smaller quad and triangle into 3 quad
 ![subdividie](screenshot5.png)
