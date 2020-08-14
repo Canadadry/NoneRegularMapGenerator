@@ -70,6 +70,15 @@ export class Quad{
 		]
 	}
 
+	extract(points:Vector[]):[Vector,Vector,Vector,Vector]{
+		return [
+			points[this.points[0]],
+			points[this.points[1]],
+			points[this.points[2]],
+			points[this.points[3]],
+		]
+	}
+
 
 	quality(points:Vector[]):number{
 		let q1 =this.quality1(points)

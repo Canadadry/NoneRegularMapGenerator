@@ -8,7 +8,7 @@ let scale:number = 50
 let depth:number = 6
 let center:Vector = new Vector(400,300)
 let SSOsteps:number=3;
-let smoothingStep:number=20;
+let smoothingStep:number=10;
 let smoothedMesh:Mesh;
 
 
@@ -20,13 +20,15 @@ love.draw = function() {
 }
 
 love.load = ()=>{
+	math.randomseed(os.time())
 	mesh = generate(depth,scale,center)
 
 	smoothedMesh = mesh
 	for(let i:number = 0;i<smoothingStep;i++){
-		let out = smooth(mesh,scale*4,0.2,SSOsteps)
+		let out = smooth(smoothedMesh,scale,0.2,SSOsteps)
 		smoothedMesh = out[1]
 	}
+
 }
 
 

@@ -95,7 +95,6 @@ class Link{
 }
 
 function permut(len:number,maxPerm:number): number[]{
-	math.randomseed(os.time())
 	let permutation:number[] =[]
 	for(let i:number=0;i<len;i++){
 		permutation.push(i)

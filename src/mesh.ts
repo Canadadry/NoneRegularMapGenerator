@@ -17,8 +17,15 @@ export class Mesh{
 		for(let i:number=0;i<this.quads.length;i++){
 			this.quads[i].draw(this.points)
 		}
+		let c = [
+			Colors.White,
+			Colors.Red,
+			Colors.Blue,
+			Colors.Green,
+			Colors.Gray,
+		]
 		for(let i:number=0;i<this.points.length;i++){
-			this.points[i].draw()
+			this.points[i].draw(c[this.pointsToQuads[i].length],4)
 		}
 	}
 

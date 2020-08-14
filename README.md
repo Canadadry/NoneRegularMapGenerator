@@ -45,22 +45,12 @@ With no random we have all the triangle merged which is nice. We will deal with 
 
 **Fourth Step** Relaxing quad to have more smooth grid
 
-Here what we are going to use : 
+We will use the [Smoothing Algorithm for Planar and Surface Mesh Based on Element Geometric Deformation by 
+Shuli Sun, Minglei Zhang, and Zhihong Gou](http://downloads.hindawi.com/journals/mpe/2015/435648.pdf). Thanks to them. I have made a stand alone implementation [here](https://github.com/Canadadry/smoothing-mesh)
 
-1. List all the points.
-2. Quads should list point by indexing the first list
-3. Build a list of quads by points
-4. Build a list of neighbour points by points
-5. Choose a relaxing function on each point. This function should not modify the initial list but build a new one
-6. Apply your function until no points move
+And voilà 
 
-Here step 4 illustrated 
-
-![point and link to their neighbour](screenshot6.png)
-
-First attempt for relaxing point => moving each point to the gravity center of its neighbour, its called [laplacian smoothing](https://en.wikipedia.org/wiki/Laplacian_smoothing) but we should better use a more sofisticated approche as [this one](http://downloads.hindawi.com/journals/mpe/2015/435648.pdf)
-
-![rexaling to center of gravity](screenshot7.png)
+![realaxed](screenshot6.png)
 
 ## Demo Usage
 

@@ -29,8 +29,8 @@ export class Vector{
 	normalize():Vector{
 		return this.mul(1/this.dist(new Vector(0,0)))
 	}
-	draw(){
-		love.graphics.setColor(1,0,0,1)
-		love.graphics.rectangle("fill",this.x-2,this.y-2,4,4,2,2)
+	draw(c:Color = new Color(1,0,0),s:number= 4){
+		love.graphics.setColor(c.r,c.g,c.b,0.5)
+		love.graphics.rectangle("fill",this.x-s/2,this.y-s/2,s,s,s/2,s/2)
 	}
 }
